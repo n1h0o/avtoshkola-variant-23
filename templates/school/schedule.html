@@ -1,26 +1,73 @@
-{% extends "school/base.html" %}{% block title %}Расписание практики{% endblock %}{% block content %}
-<section class="page-heading">
-  <span class="eyebrow">Практические занятия</span>
-  <h1>Расписание и свободные слоты</h1>
-  <p class="muted">Показаны занятия для программы {{ student.program.category.code }} с {{ student.program.gearbox }}.</p>
-</section>
-<section class="card filter-card"><div class="filter-grid"><div class="field"><label for="filter-date">Дата</label><input id="filter-date" type="date"></div><div class="field"><label for="filter-instructor">Инструктор</label><select id="filter-instructor"><option value="">Все инструкторы</option>{% for instructor in instructors %}<option value="{{ instructor.id }}">{{ instructor.user.get_full_name }}</option>{% endfor %}</select></div><div class="field search-field"><label for="slot-search">Быстрый поиск</label><input id="slot-search"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            type="search"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            placeholder="Инструктор, автомобиль или площадка"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            autocomplete="off"></div><button class="button button-primary filter-button"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             type="button"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             id="clear-filters">Сбросить</button></div><div class="results-caption"><span id="results-count">{{ slots|length }} вариантов</span><span class="muted">Занятие резервируется после подтверждения</span></div></section>
-<section id="slot-results"
-         class="slot-grid"
-         aria-live="polite"
-         aria-busy="false"
-         data-feed="{% url 'schedule_data' %}">
-  {% for slot in slots %}<article class="slot-card"
-                                  data-search="{{ slot.instructor.user.get_full_name|lower }} {{ slot.vehicle.brand_model|lower }} {{ slot.location.name|lower }}"><div class="slot-top"><span class="slot-day">{{ slot.starts_at|date:'D, d M' }}</span><span class="status-pill">Свободно</span></div><h2>{{ slot.starts_at|date:'H:i' }} - {{ slot.ends_at|date:'H:i' }}</h2><p>{{ slot.instructor.user.get_full_name }}</p><div class="slot-meta"><span>{{ slot.vehicle.brand_model }} · {{ slot.vehicle.gearbox }}</span><span>{{ slot.location.name }}</span></div><a class="button button-outline button-full"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            href="{% url 'slot_detail' slot.id %}">Подробнее и записаться</a></article>{% empty %}<div class="empty-state card"><strong>Свободных занятий пока нет</strong><p>Попробуйте изменить фильтры или вернитесь позже.</p></div>{% endfor %}
-</section>
-<div class="load-more-wrap">
-  <button class="button button-outline" type="button" id="load-more" hidden>Показать ещё</button>
-</div>
-<p class="loading-state" id="loading-state" hidden>Обновляем список…</p>
+{% extends "school/base.html" %}{% block title %}Расписание
+  практики{% endblock %}{% block content %}
+  <section class="page-heading">
+    <span class="eyebrow">Практические занятия</span>
+    <h1>Расписание и свободные слоты</h1>
+    <p class="muted">
+      Показаны занятия для программы {{ student.program.category.code }} с
+      {{ student.program.gearbox }}.
+    </p>
+  </section>
+  <section class="card filter-card">
+    <div class="filter-grid">
+      <div class="field">
+        <label for="filter-date">Дата</label><input id="filter-date" type="date">
+      </div>
+      <div class="field">
+        <label for="filter-instructor">Инструктор</label><select id="filter-instructor">
+          <option value="">Все инструкторы</option>
+          {% for instructor in instructors %}<option value="{{ instructor.id }}">
+              {{ instructor.user.get_full_name }}
+            </option>{% endfor %}
+        </select>
+      </div>
+      <div class="field search-field">
+        <label for="slot-search">Быстрый поиск</label><input
+          id="slot-search"
+          type="search"
+          placeholder="Инструктор, автомобиль или площадка"
+          autocomplete="off"
+        >
+      </div>
+      <button class="button button-primary filter-button" type="button" id="clear-filters">
+        Сбросить
+      </button>
+    </div>
+    <div class="results-caption">
+      <span id="results-count">{{ slots|length }} вариантов</span><span class="muted"
+      >Занятие резервируется после подтверждения</span>
+    </div>
+  </section>
+  <section
+    id="slot-results"
+    class="slot-grid"
+    aria-live="polite"
+    aria-busy="false"
+    data-feed="{% url 'schedule_data' %}"
+  >
+    {% for slot in slots %}<article
+        class="slot-card"
+        data-search="{{ slot.instructor.user.get_full_name|lower }} {{ slot.vehicle.brand_model|lower }} {{ slot.location.name|lower }}"
+      >
+        <div class="slot-top">
+          <span class="slot-day">{{ slot.starts_at|date:'D, d M' }}</span><span class="status-pill"
+          >Свободно</span>
+        </div>
+        <h2>{{ slot.starts_at|date:'H:i' }} - {{ slot.ends_at|date:'H:i' }}</h2>
+        <p>{{ slot.instructor.user.get_full_name }}</p>
+        <div class="slot-meta">
+          <span>{{ slot.vehicle.brand_model }} · {{ slot.vehicle.gearbox }}</span><span
+          >{{ slot.location.name }}</span>
+        </div><a class="button button-outline button-full" href="{% url 'slot_detail' slot.id %}"
+        >Подробнее и записаться</a>
+      </article>{% empty %}<div class="empty-state card">
+        <strong>Свободных занятий пока нет</strong><p>
+          Попробуйте изменить фильтры или вернитесь позже.
+        </p>
+      </div>{% endfor %}
+  </section>
+  <div class="load-more-wrap">
+    <button class="button button-outline" type="button" id="load-more" hidden>Показать ещё</button>
+  </div>
+  <p class="loading-state" id="loading-state" hidden>Обновляем список…</p>
 {% endblock %}

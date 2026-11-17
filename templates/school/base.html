@@ -4,12 +4,12 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description"
-          content="Личный кабинет автошколы: практика, расписание и учебный прогресс">
+    <meta
+      name="description"
+      content="Личный кабинет автошколы: практика, расписание и учебный прогресс"
+    >
     <title>{% block title %}Автошкола{% endblock %} | Автошкола</title>
-    <link rel="icon"
-          type="image/svg+xml"
-          href="{% static 'school/img/favicon.svg' %}">
+    <link rel="icon" type="image/svg+xml" href="{% static 'school/img/favicon.svg' %}">
     <link rel="stylesheet" href="{% static 'school/css/app.css' %}">
     <script src="{% static 'school/js/app.js' %}" defer></script>
   </head>
@@ -17,26 +17,35 @@
     <a class="skip-link" href="#main">Перейти к содержимому</a>
     <header class="site-header">
       <div class="container header-row">
-        <a class="brand"
-           href="{% url 'home' %}"
-           aria-label="Автошкола, на главную"><span class="brand-mark" aria-hidden="true">А</span><span>Автошкола<small>кабинет обучения</small></span></a>
+        <a class="brand" href="{% url 'home' %}" aria-label="Автошкола, на главную"><span
+            class="brand-mark"
+            aria-hidden="true"
+          >А</span><span>Автошкола<small>кабинет обучения</small></span></a>
         {% if request.user.is_authenticated %}
-          <button class="menu-toggle"
-                  type="button"
-                  aria-expanded="false"
-                  aria-controls="main-nav"
-                  aria-label="Открыть меню">
+          <button
+            class="menu-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="main-nav"
+            aria-label="Открыть меню"
+          >
             <span></span><span></span><span></span>
           </button>
           <nav class="main-nav" id="main-nav" aria-label="Основная навигация">
             {% if request.user.student_profile %}
-              <a href="{% url 'student_dashboard' %}">Главная</a><a href="{% url 'schedule' %}">Расписание</a><a href="{% url 'bookings' %}">Мои занятия</a><a href="{% url 'progress' %}">Прогресс</a>
+              <a href="{% url 'student_dashboard' %}">Главная</a><a href="{% url 'schedule' %}"
+              >Расписание</a><a href="{% url 'bookings' %}">Мои занятия</a><a
+                href="{% url 'progress' %}"
+              >Прогресс</a>
             {% elif request.user.employee_profile.role == "instructor" %}
-              <a href="{% url 'instructor_dashboard' %}">Главная</a><a href="{% url 'instructor_slots' %}">Слоты</a><a href="{% url 'instructor_lessons' %}">Журнал практики</a>
+              <a href="{% url 'instructor_dashboard' %}">Главная</a><a
+                href="{% url 'instructor_slots' %}"
+              >Слоты</a><a href="{% url 'instructor_lessons' %}">Журнал практики</a>
             {% elif request.user.employee_profile.role == "teacher" %}
               <a href="{% url 'teacher_dashboard' %}">Группы и зачёты</a>
             {% elif request.user.employee_profile.role == "admin" %}
-              <a href="{% url 'admin_dashboard' %}">Обзор</a><a href="{% url 'admin_users' %}">Пользователи</a>
+              <a href="{% url 'admin_dashboard' %}">Обзор</a><a href="{% url 'admin_users' %}"
+              >Пользователи</a>
             {% endif %}
             <a class="nav-exit" href="{% url 'logout' %}">Выйти</a>
           </nav>
@@ -44,9 +53,18 @@
       </div>
     </header>
     <main class="container page-main" id="main">
-      {% if messages %}<div class="messages" aria-live="polite">{% for message in messages %}<div class="message message-{{ message.tags }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+      {% if messages %}<div class="messages" aria-live="polite">
+          {% for message in messages %}<div class="message message-{{ message.tags }}">
+              {{ message }}
+            </div>{% endfor %}
+        </div>{% endif %}
       {% block content %}{% endblock %}
     </main>
-    <footer class="site-footer"><div class="container footer-row"><span>Автошкола · учебный кабинет</span><span><a href="{% url 'about' %}">О системе</a> · Демонстрационный проект · вариант 23</span></div></footer>
+    <footer class="site-footer">
+      <div class="container footer-row">
+        <span>Автошкола · учебный кабинет</span><span><a href="{% url 'about' %}">О системе</a> ·
+          Демонстрационный проект · вариант 23</span>
+      </div>
+    </footer>
   </body>
 </html>

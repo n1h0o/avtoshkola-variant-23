@@ -1,10 +1,52 @@
 {% extends "school/base.html" %}{% block title %}Внутренний экзамен{% endblock %}{% block content %}
-<section class="page-heading">
-  <span class="eyebrow">Следующий этап</span>
-  <h1>Внутренний экзамен</h1>
-  <p class="muted">Для записи нужен сданный теоретический зачёт и не менее 90% обязательной практики.</p>
-</section>
-<section class="detail-grid"><article class="card"><h2>Проверка допуска</h2><div class="check-list"><div class="check-row"><span class="check-mark">{% if theory_ok %}✓{% else %}·{% endif %}</span><span>Теоретический зачёт</span><b>{% if theory_ok %}Сдан{% else %}Не сдан{% endif %}</b></div><div class="check-row"><span class="check-mark">{% if practice_ok %}✓{% else %}·{% endif %}</span><span>Практическая подготовка</span><b>{{ student.practice_percent }}% / 90%</b></div></div><p class="fine-print">{% if exam_record.exam_date %}Заявка на {{ exam_record.exam_date|date:'d.m.Y' }} · статус: {{ exam_record.admission_status }}{% else %}Система проверяет оба условия при отправке заявки.{% endif %}</p></article><article class="card"><h2>Запросить дату</h2><form method="post" data-validate>{% csrf_token %}{% for field in form %}<div class="field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="field-error">{{ field.errors|join:', ' }}</div>{% endif %}</div>{% endfor %}<button class="button button-primary button-full"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 type="submit"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 {% if not theory_ok or not practice_ok or exam_record.exam_date %}disabled{% endif %}>Отправить заявку</button></form>{% if not theory_ok or not practice_ok %}<p class="fine-print">Запись станет доступна после выполнения обоих требований.</p>{% endif %}</article></section>
+  <section class="page-heading">
+    <span class="eyebrow">Следующий этап</span>
+    <h1>Внутренний экзамен</h1>
+    <p class="muted">
+      Для записи нужен сданный теоретический зачёт и не менее 90% обязательной практики.
+    </p>
+  </section>
+  <section class="detail-grid">
+    <article class="card">
+      <h2>Проверка допуска</h2>
+      <div class="check-list">
+        <div class="check-row">
+          <span class="check-mark">{% if theory_ok %}✓{% else %}·{% endif %}</span><span
+          >Теоретический зачёт</span><b>{% if theory_ok %}Сдан{% else %}Не сдан{% endif %}</b>
+        </div>
+        <div class="check-row">
+          <span class="check-mark">{% if practice_ok %}✓{% else %}·{% endif %}</span><span
+          >Практическая подготовка</span><b>{{ student.practice_percent }}% / 90%</b>
+        </div>
+      </div>
+      <p class="fine-print">
+        {% if exam_record.exam_date %}Заявка на {{ exam_record.exam_date|date:'d.m.Y' }} · статус:
+          {{ exam_record.admission_status }}{% else %}Система проверяет оба условия при отправке
+          заявки.{% endif %}
+      </p>
+    </article>
+    <article class="card">
+      <h2>Запросить дату</h2>
+      <form method="post" data-validate>
+        {% csrf_token %}
+        {% for field in form %}<div class="field">
+            <label
+              for="{{ field.id_for_label }}"
+            >{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="field-error">
+                {{ field.errors|join:', ' }}
+              </div>{% endif %}
+          </div>{% endfor %}
+        <button
+          class="button button-primary button-full"
+          type="submit"
+          {% if not theory_ok or not practice_ok or exam_record.exam_date %}disabled{% endif %}
+        >
+          Отправить заявку
+        </button>
+      </form>
+      {% if not theory_ok or not practice_ok %}<p class="fine-print">
+          Запись станет доступна после выполнения обоих требований.
+        </p>{% endif %}
+    </article>
+  </section>
 {% endblock %}
