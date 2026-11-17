@@ -1,4 +1,8 @@
-{% extends 'school/base.html' %}{% block title %}Теоретические зачёты{% endblock %}{% block content %}
-<section class="page-heading"><span class="eyebrow">Преподаватель теории</span><h1>Группы и теоретические зачёты</h1><p class="muted">Зафиксируйте результат зачёта. Система сохранит дату и ответственного сотрудника.</p></section>
+{% extends "school/base.html" %}{% block title %}Теоретические зачёты{% endblock %}{% block content %}
+<section class="page-heading">
+  <span class="eyebrow">Преподаватель теории</span>
+  <h1>Группы и теоретические зачёты</h1>
+  <p class="muted">Зафиксируйте результат зачёта. Система сохранит дату и ответственного сотрудника.</p>
+</section>
 <section class="detail-grid"><article class="card"><h2>Добавить результат</h2><form method="post" data-validate>{% csrf_token %}{% if form.non_field_errors %}<div class="form-error">{{ form.non_field_errors }}</div>{% endif %}{% for field in form %}<div class="field {% if field.field.widget.input_type == 'checkbox' %}checkbox-field{% endif %}"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="field-error">{{ field.errors|join:', ' }}</div>{% endif %}</div>{% endfor %}<button class="button button-primary button-full" type="submit">Сохранить зачёт</button></form></article><article class="card"><h2>Учебная группа</h2>{% for student in students %}<div class="student-line"><span class="avatar-small">{{ student.user.first_name|first }}{{ student.user.last_name|first }}</span><span><strong>{{ student }}</strong><small>{{ student.group|default:'Без группы' }} · {{ student.program.category.code }}</small></span></div>{% empty %}<p class="muted">В системе пока нет курсантов.</p>{% endfor %}</article></section>
 {% endblock %}

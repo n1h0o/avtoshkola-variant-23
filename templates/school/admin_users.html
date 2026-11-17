@@ -1,5 +1,9 @@
-{% extends 'school/base.html' %}{% block title %}Пользователи автошколы{% endblock %}{% block content %}
-<section class="page-heading"><span class="eyebrow">Администрирование</span><h1>Пользователи и роли</h1><p class="muted">Демонстрационный перечень учащихся и сотрудников.</p></section>
+{% extends "school/base.html" %}{% block title %}Пользователи автошколы{% endblock %}{% block content %}
+<section class="page-heading">
+  <span class="eyebrow">Администрирование</span>
+  <h1>Пользователи и роли</h1>
+  <p class="muted">Демонстрационный перечень учащихся и сотрудников.</p>
+</section>
 <section class="card table-card"><h2>Курсанты</h2><div class="table-scroll"><table><thead><tr><th>ФИО</th><th>Программа</th><th>Группа</th><th>Контакт</th><th>Статус</th></tr></thead><tbody>{% for student in students %}<tr><td>{{ student }}</td><td>{{ student.program.category.code }} · {{ student.program.gearbox }}</td><td>{{ student.group|default:'-' }}</td><td>{{ student.phone }}</td><td>{% if student.is_active %}Активен{% else %}Неактивен{% endif %}</td></tr>{% endfor %}</tbody></table></div></section>
 <section class="card table-card"><h2>Сотрудники</h2><div class="table-scroll"><table><thead><tr><th>ФИО</th><th>Роль</th><th>Телефон</th><th>Статус</th></tr></thead><tbody>{% for person in staff %}<tr><td>{{ person.user.get_full_name }}</td><td>{{ person.get_role_display }}</td><td>{{ person.phone }}</td><td>{% if person.is_active %}Активен{% else %}Неактивен{% endif %}</td></tr>{% endfor %}</tbody></table></div></section>
 {% endblock %}

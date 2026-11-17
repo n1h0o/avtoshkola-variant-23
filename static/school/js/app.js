@@ -54,7 +54,10 @@
   const loadMore = document.querySelector('#load-more');
   let nextPage = 2;
   let hasNext = false;
-  let items = Array.from(results.querySelectorAll('.slot-card')).map((card) => ({ element: card, search: card.dataset.search || '' }));
+  let items = Array.from(results.querySelectorAll('.slot-card')).map((card) => ({
+    element: card,
+    search: card.dataset.search || ''
+  }));
 
   const text = (parent, tag, value, className) => {
     const node = document.createElement(tag);
@@ -96,7 +99,10 @@
     card.append(meta);
     const link = text(card, 'a', 'Подробнее и записаться', 'button button-outline button-full');
     link.href = slot.url;
-    return { element: card, search: card.dataset.search };
+    return {
+      element: card,
+      search: card.dataset.search
+    };
   }
 
   function makeEndpoint(page = 1) {
@@ -111,7 +117,11 @@
     results.setAttribute('aria-busy', 'true');
     if (loading) loading.hidden = false;
     try {
-      const response = await fetch(makeEndpoint(1), { headers: { Accept: 'application/json' } });
+      const response = await fetch(makeEndpoint(1), {
+        headers: {
+          Accept: 'application/json'
+        }
+      });
       if (!response.ok) throw new Error('Не удалось обновить список');
       const payload = await response.json();
       items = payload.items.map(makeCard);
@@ -139,14 +149,21 @@
     if (loadMore) loadMore.disabled = true;
     if (loading) loading.hidden = false;
     try {
-      const response = await fetch(makeEndpoint(nextPage), { headers: { Accept: 'application/json' } });
+      const response = await fetch(makeEndpoint(nextPage), {
+        headers: {
+          Accept: 'application/json'
+        }
+      });
       if (!response.ok) throw new Error('Не удалось загрузить следующую страницу');
       const payload = await response.json();
       items = items.concat(payload.items.map(makeCard));
       nextPage = payload.page + 1;
       hasNext = payload.has_next;
       render(items);
-      if (loadMore) { loadMore.hidden = !hasNext; loadMore.disabled = false; }
+      if (loadMore) {
+        loadMore.hidden = !hasNext;
+        loadMore.disabled = false;
+      }
     } catch (error) {
       if (loadMore) loadMore.disabled = false;
     } finally {

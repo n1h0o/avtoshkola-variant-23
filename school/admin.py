@@ -1,8 +1,20 @@
 from django.contrib import admin
 
-from .models import (Category, ChangeLog, DrivingRecord, Employee, InstructorSlot, InternalExam,
-                     Notification, PracticeBooking, Student, StudyGroup, TrainingLocation,
-                     TrainingProgram, TrainingVehicle)
+from .models import (
+    Category,
+    ChangeLog,
+    DrivingRecord,
+    Employee,
+    InstructorSlot,
+    InternalExam,
+    Notification,
+    PracticeBooking,
+    Student,
+    StudyGroup,
+    TrainingLocation,
+    TrainingProgram,
+    TrainingVehicle,
+)
 
 
 @admin.register(Student)
@@ -26,5 +38,17 @@ class PracticeBookingAdmin(admin.ModelAdmin):
     search_fields = ("student__user__last_name", "student__user__first_name")
 
 
-admin.site.register([Category, TrainingProgram, StudyGroup, Employee, TrainingVehicle,
-                     TrainingLocation, DrivingRecord, InternalExam, Notification, ChangeLog])
+admin.site.register(
+    [
+        Category,
+        TrainingProgram,
+        StudyGroup,
+        Employee,
+        TrainingVehicle,
+        TrainingLocation,
+        DrivingRecord,
+        InternalExam,
+        Notification,
+        ChangeLog,
+    ]
+)

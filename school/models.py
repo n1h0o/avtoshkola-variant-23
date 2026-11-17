@@ -22,7 +22,9 @@ class TrainingProgram(models.Model):
         MANUAL = "МКПП", "Механическая"
         AUTO = "АКПП", "Автоматическая"
 
-    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="programs")
+    category = models.ForeignKey(
+        Category, on_delete=models.PROTECT, related_name="programs"
+    )
     name = models.CharField(max_length=120)
     gearbox = models.CharField(max_length=4, choices=Gearbox.choices)
     practice_hours = models.PositiveSmallIntegerField(default=56)
@@ -38,7 +40,9 @@ class TrainingProgram(models.Model):
 
 class StudyGroup(models.Model):
     code = models.CharField(max_length=30, unique=True)
-    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="groups")
+    category = models.ForeignKey(
+        Category, on_delete=models.PROTECT, related_name="groups"
+    )
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=20, default="active")
@@ -53,9 +57,21 @@ class StudyGroup(models.Model):
 
 
 class Student(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="student_profile")
-    program = models.ForeignKey(TrainingProgram, on_delete=models.PROTECT, related_name="students")
-    group = models.ForeignKey(StudyGroup, on_delete=models.SET_NULL, null=True, blank=True, related_name="students")
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="student_profile",
+    )
+    program = models.ForeignKey(
+        TrainingProgram, on_delete=models.PROTECT, related_name="students"
+    )
+    group = models.ForeignKey(
+        StudyGroup,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="students",
+    )
     phone = models.CharField(max_length=20)
     enrolled_at = models.DateField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
@@ -93,7 +109,11 @@ class Employee(models.Model):
         TEACHER = "teacher", "Преподаватель"
         ADMIN = "admin", "Администратор"
 
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="employee_profile")
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="employee_profile",
+    )
     role = models.CharField(max_length=20, choices=Role.choices)
     phone = models.CharField(max_length=20)
     is_active = models.BooleanField(default=True)
@@ -109,7 +129,9 @@ class Employee(models.Model):
 class TrainingVehicle(models.Model):
     registration_code = models.CharField(max_length=12, unique=True)
     brand_model = models.CharField(max_length=100)
-    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="vehicles")
+    category = models.ForeignKey(
+        Category, on_delete=models.PROTECT, related_name="vehicles"
+    )
     gearbox = models.CharField(max_length=4, choices=TrainingProgram.Gearbox.choices)
     is_active = models.BooleanField(default=True)
 
@@ -143,18 +165,31 @@ class InstructorSlot(models.Model):
         DONE = "done", "Проведено"
         CANCELLED = "cancelled", "Отменено"
 
-    instructor = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name="slots")
-    vehicle = models.ForeignKey(TrainingVehicle, on_delete=models.PROTECT, related_name="slots")
-    location = models.ForeignKey(TrainingLocation, on_delete=models.PROTECT, related_name="slots")
+    instructor = models.ForeignKey(
+        Employee, on_delete=models.PROTECT, related_name="slots"
+    )
+    vehicle = models.ForeignKey(
+        TrainingVehicle, on_delete=models.PROTECT, related_name="slots"
+    )
+    location = models.ForeignKey(
+        TrainingLocation, on_delete=models.PROTECT, related_name="slots"
+    )
     starts_at = models.DateTimeField()
     ends_at = models.DateTimeField()
-    status = models.CharField(max_length=20, choices=Status.choices, default=Status.AVAILABLE)
+    status = models.CharField(
+        max_length=20, choices=Status.choices, default=Status.AVAILABLE
+    )
 
     class Meta:
         ordering = ["starts_at"]
         verbose_name = "слот расписания"
         verbose_name_plural = "слоты расписания"
-        constraints = [models.CheckConstraint(condition=Q(ends_at__gt=models.F("starts_at")), name="slot_end_after_start")]
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(ends_at__gt=models.F("starts_at")),
+                name="slot_end_after_start",
+            )
+        ]
 
     def __str__(self):
         return f"{self.starts_at:%d.%m.%Y %H:%M} - {self.instructor}"
@@ -170,10 +205,16 @@ class PracticeBooking(models.Model):
         CANCELLED = "cancelled", "Отменена"
         COMPLETED = "completed", "Завершена"
 
-    student = models.ForeignKey(Student, on_delete=models.PROTECT, related_name="bookings")
-    slot = models.ForeignKey(InstructorSlot, on_delete=models.PROTECT, related_name="bookings")
+    student = models.ForeignKey(
+        Student, on_delete=models.PROTECT, related_name="bookings"
+    )
+    slot = models.ForeignKey(
+        InstructorSlot, on_delete=models.PROTECT, related_name="bookings"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=Status.choices, default=Status.ACTIVE)
+    status = models.CharField(
+        max_length=20, choices=Status.choices, default=Status.ACTIVE
+    )
     cancelled_at = models.DateTimeField(null=True, blank=True)
     cancel_reason = models.CharField(max_length=250, blank=True)
 
@@ -181,16 +222,32 @@ class PracticeBooking(models.Model):
         ordering = ["slot__starts_at"]
         verbose_name = "бронь"
         verbose_name_plural = "брони"
-        constraints = [models.UniqueConstraint(fields=["slot"], condition=Q(status="active"), name="one_active_booking_per_slot")]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["slot"],
+                condition=Q(status="active"),
+                name="one_active_booking_per_slot",
+            )
+        ]
 
     def __str__(self):
         return f"{self.student} - {self.slot.starts_at:%d.%m.%Y %H:%M}"
 
 
 class DrivingRecord(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.PROTECT, related_name="driving_records")
-    booking = models.OneToOneField(PracticeBooking, on_delete=models.SET_NULL, null=True, blank=True, related_name="driving_record")
-    instructor = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name="driving_records")
+    student = models.ForeignKey(
+        Student, on_delete=models.PROTECT, related_name="driving_records"
+    )
+    booking = models.OneToOneField(
+        PracticeBooking,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="driving_record",
+    )
+    instructor = models.ForeignKey(
+        Employee, on_delete=models.PROTECT, related_name="driving_records"
+    )
     actual_date = models.DateField()
     duration_minutes = models.PositiveSmallIntegerField()
     comment = models.CharField(max_length=250, blank=True)
@@ -199,17 +256,25 @@ class DrivingRecord(models.Model):
         ordering = ["-actual_date"]
         verbose_name = "запись о практике"
         verbose_name_plural = "записи о практике"
-        constraints = [models.CheckConstraint(condition=Q(duration_minutes__gt=0), name="driving_duration_positive")]
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(duration_minutes__gt=0), name="driving_duration_positive"
+            )
+        ]
 
     def __str__(self):
         return f"{self.student} - {self.actual_date:%d.%m.%Y}, {self.duration_minutes} мин."
 
 
 class InternalExam(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="internal_exams")
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, related_name="internal_exams"
+    )
     theory_passed = models.BooleanField(default=False)
     theory_date = models.DateField(null=True, blank=True)
-    marked_by = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name="theory_marks")
+    marked_by = models.ForeignKey(
+        Employee, on_delete=models.PROTECT, related_name="theory_marks"
+    )
     exam_date = models.DateField(null=True, blank=True)
     admission_status = models.CharField(max_length=30, default="not_admitted")
 
@@ -223,8 +288,18 @@ class InternalExam(models.Model):
 
 
 class Notification(models.Model):
-    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="school_notifications")
-    booking = models.ForeignKey(PracticeBooking, on_delete=models.CASCADE, related_name="notifications", null=True, blank=True)
+    recipient = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="school_notifications",
+    )
+    booking = models.ForeignKey(
+        PracticeBooking,
+        on_delete=models.CASCADE,
+        related_name="notifications",
+        null=True,
+        blank=True,
+    )
     message = models.CharField(max_length=250)
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
@@ -239,8 +314,14 @@ class Notification(models.Model):
 
 
 class ChangeLog(models.Model):
-    booking = models.ForeignKey(PracticeBooking, on_delete=models.CASCADE, related_name="changes")
-    changed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="booking_changes")
+    booking = models.ForeignKey(
+        PracticeBooking, on_delete=models.CASCADE, related_name="changes"
+    )
+    changed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="booking_changes",
+    )
     reason = models.CharField(max_length=250)
     changed_at = models.DateTimeField(auto_now_add=True)
 

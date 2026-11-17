@@ -1,15 +1,36 @@
-{% extends 'school/base.html' %}
+{% extends "school/base.html" %}
 {% block title %}Вход{% endblock %}
 {% block content %}
-<section class="login-layout">
-  <div class="login-intro"><span class="eyebrow">Личный кабинет</span><h1>Учёба в автошколе - по понятному плану</h1><p>Записывайтесь на практику, проверяйте баланс часов и следите за подготовкой к внутреннему экзамену.</p><div class="login-note"><strong>Всё обучение в одном месте</strong><span>Расписание · история занятий · зачёты</span></div></div>
-  <div class="card login-card"><h2>Войти в систему</h2><p class="muted">Введите данные демонстрационной учётной записи</p>
-    <form method="post" data-validate>{% csrf_token %}
-      {% if form.non_field_errors %}<div class="form-error" role="alert">{{ form.non_field_errors }}</div>{% endif %}
-      {% for field in form %}<div class="field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="field-error">{{ field.errors|join:', ' }}</div>{% endif %}</div>{% endfor %}
-      <button class="button button-primary button-full" type="submit">Войти</button>
-    </form>
-    <details class="demo-access"><summary>Демо-доступы</summary><p>Курсант: <b>kursant</b><br>Инструктор: <b>instructor</b><br>Преподаватель: <b>teacher</b><br>Администратор: <b>admin_demo</b><br>Пароль для всех: <b>demo1234</b></p></details>
-  </div>
-</section>
+  <section class="login-layout">
+    <div class="login-intro">
+      <span class="eyebrow">Личный кабинет</span>
+      <h1>Учёба в автошколе - по понятному плану</h1>
+      <p>Записывайтесь на практику, проверяйте баланс часов и следите за подготовкой к внутреннему экзамену.</p>
+      <div class="login-note"><strong>Всё обучение в одном месте</strong><span>Расписание · история занятий · зачёты</span></div>
+    </div>
+    <div class="card login-card">
+      <h2>Войти в систему</h2>
+      <p class="muted">Введите данные демонстрационной учётной записи</p>
+      <form method="post" data-validate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="form-error" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+        {% for field in form %}<div class="field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="field-error">{{ field.errors|join:', ' }}</div>{% endif %}</div>{% endfor %}
+        <button class="button button-primary button-full" type="submit">Войти</button>
+      </form>
+      <details class="demo-access">
+        <summary>Демо-доступы</summary>
+        <p>
+          Курсант: <b>kursant</b>
+          <br>
+          Инструктор: <b>instructor</b>
+          <br>
+          Преподаватель: <b>teacher</b>
+          <br>
+          Администратор: <b>admin_demo</b>
+          <br>
+          Пароль для всех: <b>demo1234</b>
+        </p>
+      </details>
+    </div>
+  </section>
 {% endblock %}

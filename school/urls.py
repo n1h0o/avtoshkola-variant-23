@@ -11,7 +11,11 @@ urlpatterns = [
     path("student/schedule/data/", views.schedule_data, name="schedule_data"),
     path("student/schedule/slot/<int:slot_id>/", views.slot_detail, name="slot_detail"),
     path("student/bookings/", views.bookings, name="bookings"),
-    path("student/bookings/<int:booking_id>/cancel/", views.cancel_booking, name="cancel_booking"),
+    path(
+        "student/bookings/<int:booking_id>/cancel/",
+        views.cancel_booking,
+        name="cancel_booking",
+    ),
     path("student/progress/", views.progress, name="progress"),
     path("student/exam/", views.exam, name="exam"),
     path("instructor/", views.instructor_dashboard, name="instructor_dashboard"),

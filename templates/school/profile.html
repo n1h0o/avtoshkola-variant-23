@@ -1,6 +1,55 @@
-{% extends 'school/base.html' %}{% block title %}Профиль и программа{% endblock %}{% block content %}
-<section class="page-heading"><span class="eyebrow">Профиль и программа</span><h1>Учебная карточка</h1><p class="muted">Основные сведения о вашей программе обучения.</p></section>
-<section class="card profile-card"><div class="profile-avatar" aria-hidden="true">{{ student.user.first_name|first }}{{ student.user.last_name|first }}</div><div><span class="eyebrow">Курсант</span><h2>{{ student.user.get_full_name }}</h2><p>{{ student.user.username }} · {{ student.phone }}</p></div></section>
-<section class="detail-grid"><article class="card"><h2>Программа обучения</h2><dl class="definition-list"><div><dt>Категория</dt><dd>{{ student.program.category.code }} - {{ student.program.category.name }}</dd></div><div><dt>Тип коробки передач</dt><dd>{{ student.program.gearbox }}</dd></div><div><dt>Объём практики</dt><dd>{{ student.program.practice_hours }} часов</dd></div><div><dt>Учебная группа</dt><dd>{{ student.group|default:'Не назначена' }}</dd></div></dl></article><article class="card"><h2>Баланс часов</h2><progress class="progress-bar" max="100" value="{{ student.practice_percent }}">{{ student.practice_percent }}%</progress><p><strong>{{ student.completed_hours|floatformat:1 }} ч</strong> пройдено из {{ student.program.practice_hours }} ч</p><p class="muted">Осталось {{ student.remaining_hours|floatformat:1 }} часов практического обучения.</p></article></section>
+{% extends "school/base.html" %}{% block title %}Профиль и программа{% endblock %}{% block content %}
+<section class="page-heading">
+  <span class="eyebrow">Профиль и программа</span>
+  <h1>Учебная карточка</h1>
+  <p class="muted">Основные сведения о вашей программе обучения.</p>
+</section>
+<section class="card profile-card">
+  <div class="profile-avatar"
+       aria-hidden="true">{{ student.user.first_name|first }}{{ student.user.last_name|first }}</div>
+  <div>
+    <span class="eyebrow">Курсант</span>
+    <h2>{{ student.user.get_full_name }}</h2>
+    <p>{{ student.user.username }} · {{ student.phone }}</p>
+  </div>
+</section>
+<section class="detail-grid">
+  <article class="card">
+    <h2>Программа обучения</h2>
+    <dl class="definition-list">
+      <div>
+        <dt>Категория</dt>
+        <dd>
+          {{ student.program.category.code }} - {{ student.program.category.name }}
+        </dd>
+      </div>
+      <div>
+        <dt>Тип коробки передач</dt>
+        <dd>
+          {{ student.program.gearbox }}
+        </dd>
+      </div>
+      <div>
+        <dt>Объём практики</dt>
+        <dd>
+          {{ student.program.practice_hours }} часов
+        </dd>
+      </div>
+      <div>
+        <dt>Учебная группа</dt>
+        <dd>
+          {{ student.group|default:'Не назначена' }}
+        </dd>
+      </div>
+    </dl>
+  </article><article class="card">
+    <h2>Баланс часов</h2>
+    <progress class="progress-bar"
+              max="100"
+              value="{{ student.practice_percent }}">{{ student.practice_percent }}%</progress>
+    <p><strong>{{ student.completed_hours|floatformat:1 }} ч</strong> пройдено из {{ student.program.practice_hours }} ч</p>
+    <p class="muted">Осталось {{ student.remaining_hours|floatformat:1 }} часов практического обучения.</p>
+  </article>
+</section>
 <section class="card contact-card"><h2>Контактные данные</h2><form method="post" data-validate>{% csrf_token %}{% for field in form %}<div class="field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="field-error">{{ field.errors|join:', ' }}</div>{% endif %}</div>{% endfor %}<button class="button button-primary" type="submit">Сохранить контакты</button></form></section>
 {% endblock %}
