@@ -1,3 +1,4 @@
+# настройки представления учебных данных в панели django.
 from django.contrib import admin
 
 from .models import (
@@ -19,6 +20,7 @@ from .models import (
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
+    # настраивает поиск и фильтры по карточкам курсантов.
     list_display = ("user", "program", "group", "phone", "is_active")
     list_filter = ("program__category", "program__gearbox", "is_active")
     search_fields = ("user__first_name", "user__last_name", "user__username")
@@ -26,6 +28,7 @@ class StudentAdmin(admin.ModelAdmin):
 
 @admin.register(InstructorSlot)
 class InstructorSlotAdmin(admin.ModelAdmin):
+    # показывает слоты с фильтрами по статусу и автомобилю.
     list_display = ("starts_at", "instructor", "vehicle", "location", "status")
     list_filter = ("status", "vehicle__gearbox", "vehicle__category")
     date_hierarchy = "starts_at"
@@ -33,6 +36,7 @@ class InstructorSlotAdmin(admin.ModelAdmin):
 
 @admin.register(PracticeBooking)
 class PracticeBookingAdmin(admin.ModelAdmin):
+    # позволяет находить брони и проверять их статус.
     list_display = ("student", "slot", "status", "created_at")
     list_filter = ("status",)
     search_fields = ("student__user__last_name", "student__user__first_name")

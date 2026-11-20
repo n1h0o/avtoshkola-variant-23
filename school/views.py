@@ -1,3 +1,4 @@
+# обработчики страниц и правила выполнения действий пользователей.
 from datetime import timedelta
 from functools import wraps
 
@@ -56,6 +57,7 @@ def employee_role(role):
 
 
 def student_profile(request):
+    # возвращает активный профиль курсанта текущего пользователя.
     return get_object_or_404(
         Student.objects.select_related("user", "program__category", "group"),
         user=request.user,
@@ -64,6 +66,7 @@ def student_profile(request):
 
 
 def student_required(view):
+    # ограничивает страницу доступом активного курсанта.
     @wraps(view)
     @login_required
     def wrapped(request, *args, **kwargs):
@@ -78,6 +81,7 @@ def student_required(view):
 
 @login_required
 def home(request):
+    # перенаправляет пользователя в кабинет согласно его роли.
     if hasattr(request.user, "student_profile"):
         return redirect("student_dashboard")
     employee = getattr(request.user, "employee_profile", None)
@@ -93,12 +97,14 @@ def home(request):
 
 
 def logout_view(request):
+    # завершает сеанс пользователя и возвращает на страницу входа.
     logout(request)
     return redirect("login")
 
 
 @student_required
 def student_dashboard(request, student):
+    # показывает курсанту баланс часов, ближайшее занятие и уведомления.
     next_booking = (
         student.bookings.filter(
             status=PracticeBooking.Status.ACTIVE, slot__starts_at__gte=timezone.now()
@@ -116,6 +122,7 @@ def student_dashboard(request, student):
 
 @student_required
 def student_profile_page(request, student):
+    # сохраняет контактные данные из профиля курсанта.
     form = ContactForm(
         request.POST or None,
         initial={"email": request.user.email, "phone": student.phone},
@@ -144,6 +151,7 @@ def slot_queryset(student):
 
 @student_required
 def schedule_data(request, student):
+    # возвращает отфильтрованные слоты расписания в формате JSON.
     slots = slot_queryset(student)
     raw_date = request.GET.get("date", "").strip()
     instructor = request.GET.get("instructor", "").strip()
@@ -178,6 +186,7 @@ def schedule_data(request, student):
 
 @student_required
 def schedule(request, student):
+    # показывает доступные слоты с постраничной навигацией.
     form = SlotSearchForm(request.GET or None)
     instructors = Employee.objects.filter(role=Employee.Role.INSTRUCTOR, is_active=True)
     page = Paginator(slot_queryset(student), 20).get_page(request.GET.get("page", 1))
@@ -196,6 +205,7 @@ def schedule(request, student):
 
 @student_required
 def slot_detail(request, student, slot_id):
+    # проверяет условия и создаёт бронь на выбранное время.
     slot = get_object_or_404(
         InstructorSlot.objects.select_related(
             "instructor__user", "vehicle", "location"
@@ -251,6 +261,7 @@ def slot_detail(request, student, slot_id):
 
 @student_required
 def bookings(request, student):
+    # показывает курсанту историю его броней.
     items = student.bookings.select_related(
         "slot__instructor__user", "slot__vehicle", "slot__location"
     ).all()
@@ -264,6 +275,7 @@ def bookings(request, student):
 @student_required
 @require_POST
 def cancel_booking(request, student, booking_id):
+    # освобождает будущий слот и записывает причину отмены.
     booking = get_object_or_404(
         PracticeBooking.objects.select_related("slot"),
         pk=booking_id,
@@ -293,6 +305,7 @@ def cancel_booking(request, student, booking_id):
 
 @student_required
 def progress(request, student):
+    # показывает журнал проведённых занятий и прогресс практики.
     records = student.driving_records.select_related("instructor__user").all()
     return render(
         request, "school/progress.html", {"student": student, "records": records}
@@ -342,6 +355,7 @@ def exam(request, student):
 
 @employee_role(Employee.Role.INSTRUCTOR)
 def instructor_dashboard(request, employee):
+    # показывает инструктору ближайшие слоты расписания.
     slots = employee.slots.filter(starts_at__gte=timezone.now()).select_related(
         "vehicle", "location"
     )[:6]
@@ -360,6 +374,7 @@ def instructor_dashboard(request, employee):
 
 @employee_role(Employee.Role.INSTRUCTOR)
 def instructor_slots(request, employee):
+    # создаёт и показывает слоты текущего инструктора.
     form = SlotCreateForm(request.POST or None, instructor=employee)
     if request.method == "POST" and form.is_valid():
         item = form.save(commit=False)
@@ -379,6 +394,7 @@ def instructor_slots(request, employee):
 
 @employee_role(Employee.Role.INSTRUCTOR)
 def instructor_lessons(request, employee):
+    # сохраняет факт проведения занятия в журнале практики.
     form = DrivingRecordForm(request.POST or None, instructor=employee)
     if request.method == "POST" and form.is_valid():
         booking = form.cleaned_data["booking"]
@@ -411,6 +427,7 @@ def instructor_lessons(request, employee):
 
 @employee_role(Employee.Role.TEACHER)
 def teacher_dashboard(request, employee):
+    # сохраняет теоретический зачёт курсанта.
     form = TheoryResultForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         exam_item = form.save(commit=False)
@@ -429,6 +446,7 @@ def teacher_dashboard(request, employee):
 
 @employee_role(Employee.Role.ADMIN)
 def admin_dashboard(request, employee):
+    # собирает сводные показатели и последние изменения системы.
     return render(
         request,
         "school/admin_dashboard.html",
@@ -450,6 +468,7 @@ def admin_dashboard(request, employee):
 
 @employee_role(Employee.Role.ADMIN)
 def admin_users(request, employee):
+    # показывает список курсантов и сотрудников автошколы.
     students = Student.objects.select_related("user", "program__category")
     staff = Employee.objects.select_related("user")
     return render(
@@ -460,4 +479,5 @@ def admin_users(request, employee):
 
 
 def about(request):
+    # отображает краткое описание учебной системы.
     return render(request, "school/about.html")

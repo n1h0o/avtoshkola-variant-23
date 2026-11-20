@@ -1,3 +1,4 @@
+# команда создаёт набор данных для демонстрации приложения.
 from datetime import date, timedelta
 
 from django.contrib.auth import get_user_model
@@ -21,6 +22,7 @@ from school.models import (
 
 
 class Command(BaseCommand):
+    # команда наполняет базу демонстрационными аккаунтами и занятиями.
     help = "Create synthetic demonstration accounts and driving school records."
 
     def handle(self, *args, **options):
@@ -60,6 +62,7 @@ class Command(BaseCommand):
         )
 
         def user_for(username, first_name, last_name, staff=False):
+            # создаёт демо-пользователя или обновляет его учебную учётную запись.
             user, created = User.objects.get_or_create(
                 username=username,
                 defaults={

@@ -58,7 +58,8 @@
               {{ message }}
             </div>{% endfor %}
         </div>{% endif %}
-      {% block content %}{% endblock %}
+      {% block content %}
+        {# общий каркас задаёт навигацию, сообщения и оформление страниц. #}{% endblock %}
     </main>
     <footer class="site-footer">
       <div class="container footer-row">

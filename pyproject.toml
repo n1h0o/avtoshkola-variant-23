@@ -1,12 +1,15 @@
+# настройки форматирования python.
 [tool.black]
 line-length = 88
 target-version = ["py312"]
 
+# порядок группировки импортов python.
 [tool.isort]
 profile = "black"
 line_length = 88
 known_first_party = ["config", "school"]
 
+# настройки проверки django-шаблонов.
 [tool.djlint]
 profile = "django"
 indent = 2

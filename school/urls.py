@@ -1,3 +1,4 @@
+# маршруты страниц курсанта, инструктора, преподавателя и администратора.
 from django.urls import path
 
 from . import views

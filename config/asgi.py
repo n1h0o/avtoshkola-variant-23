@@ -7,6 +7,8 @@ For more information on this file, see
 https://docs.djangoproject.com/en/5.2/howto/deployment/asgi/
 """
 
+# точка входа для запуска проекта через ASGI сервер.
+
 import os
 
 from django.core.asgi import get_asgi_application

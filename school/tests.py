@@ -1,3 +1,4 @@
+# проверки основных пользовательских сценариев приложения.
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
@@ -19,8 +20,10 @@ from .models import (
 
 
 class SchoolFlowTests(TestCase):
+    # набор тестов для ключевых сценариев обучения и записи.
     @classmethod
     def setUpTestData(cls):
+        # создаёт общие тестовые аккаунты, программу и расписание.
         User = get_user_model()
         cls.cat_b = Category.objects.create(code="B", name="Легковые автомобили")
         cls.cat_a = Category.objects.create(code="A", name="Мотоциклы")
@@ -111,6 +114,7 @@ class SchoolFlowTests(TestCase):
         )
 
     def test_student_pages_require_login_and_load(self):
+        # проверяет доступ курсанта к защищённым страницам.
         self.assertRedirects(
             self.client.get(reverse("student_dashboard")),
             f"{reverse('login')}?next={reverse('student_dashboard')}",
@@ -128,6 +132,7 @@ class SchoolFlowTests(TestCase):
             self.assertEqual(response.status_code, 200, name)
 
     def test_schedule_json_only_returns_vehicle_matching_program(self):
+        # проверяет фильтр транспорта по программе курсанта.
         self.client.force_login(self.student_user)
         response = self.client.get(reverse("schedule_data"))
         self.assertEqual(response.status_code, 200)
@@ -136,6 +141,7 @@ class SchoolFlowTests(TestCase):
         )
 
     def test_schedule_json_paginates_by_twenty(self):
+        # проверяет размер страницы в выдаче расписания.
         start = timezone.now() + timedelta(days=5)
         for i in range(20):
             slot_start = start + timedelta(days=i)
@@ -155,6 +161,7 @@ class SchoolFlowTests(TestCase):
         self.assertEqual(len(second.json()["items"]), 1)
 
     def test_student_can_book_matching_slot(self):
+        # проверяет успешную запись на подходящий автомобиль.
         self.client.force_login(self.student_user)
         response = self.client.post(
             reverse("slot_detail", args=[self.manual_slot.id]), {"confirm": "on"}
@@ -165,6 +172,7 @@ class SchoolFlowTests(TestCase):
         self.assertEqual(self.student.bookings.count(), 1)
 
     def test_cancel_reopens_slot_and_writes_change_log(self):
+        # проверяет отмену брони и освобождение слота.
         self.client.force_login(self.student_user)
         self.client.post(
             reverse("slot_detail", args=[self.manual_slot.id]), {"confirm": "on"}
@@ -181,12 +189,14 @@ class SchoolFlowTests(TestCase):
         self.assertEqual(booking.changes.count(), 1)
 
     def test_student_cannot_open_slot_with_wrong_gearbox(self):
+        # проверяет запрет записи на неподходящую коробку передач.
         self.client.force_login(self.student_user)
         response = self.client.get(reverse("slot_detail", args=[self.auto_slot.id]))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(self.student.bookings.count(), 0)
 
     def test_exam_request_is_blocked_before_practice_threshold(self):
+        # проверяет ограничение допуска к экзамену.
         self.client.force_login(self.student_user)
         response = self.client.post(
             reverse("exam"),
@@ -198,6 +208,7 @@ class SchoolFlowTests(TestCase):
         self.assertTrue(response.context["messages"])
 
     def test_contact_form_rejects_invalid_phone(self):
+        # проверяет отказ формы для некорректного телефона.
         self.client.force_login(self.student_user)
         response = self.client.post(
             reverse("student_profile"), {"phone": "123", "email": "bad"}
@@ -207,6 +218,7 @@ class SchoolFlowTests(TestCase):
         self.assertEqual(self.student.phone, "+7 900 111-11-11")
 
     def test_employee_role_pages_load(self):
+        # проверяет кабинеты сотрудника для каждой роли.
         self.client.force_login(self.instructor_user)
         self.assertEqual(
             self.client.get(reverse("instructor_dashboard")).status_code, 200
@@ -222,6 +234,7 @@ class SchoolFlowTests(TestCase):
         self.assertEqual(self.client.get(reverse("admin_users")).status_code, 200)
 
     def test_login_redirects_employee_to_role_dashboard(self):
+        # проверяет переход сотрудника в кабинет своей роли.
         response = self.client.post(
             reverse("login"),
             {"username": "test_instructor", "password": "test-pass"},

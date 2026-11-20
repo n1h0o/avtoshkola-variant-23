@@ -1,9 +1,11 @@
+# модели хранят учебные программы, расписание и результаты обучения.
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
 
 
 class Category(models.Model):
+    # справочник категорий транспортных средств.
     code = models.CharField(max_length=2, unique=True)
     name = models.CharField(max_length=80)
     is_active = models.BooleanField(default=True)
@@ -18,6 +20,7 @@ class Category(models.Model):
 
 
 class TrainingProgram(models.Model):
+    # связывает категорию, коробку передач и норму практики.
     class Gearbox(models.TextChoices):
         MANUAL = "МКПП", "Механическая"
         AUTO = "АКПП", "Автоматическая"
@@ -39,6 +42,7 @@ class TrainingProgram(models.Model):
 
 
 class StudyGroup(models.Model):
+    # хранит состав и сроки обучения группы.
     code = models.CharField(max_length=30, unique=True)
     category = models.ForeignKey(
         Category, on_delete=models.PROTECT, related_name="groups"
@@ -57,6 +61,7 @@ class StudyGroup(models.Model):
 
 
 class Student(models.Model):
+    # профиль курсанта и расчёт его практических часов.
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -86,24 +91,29 @@ class Student(models.Model):
 
     @property
     def completed_minutes(self):
+        # суммирует длительность всех записанных занятий.
         return sum(item.duration_minutes for item in self.driving_records.all())
 
     @property
     def completed_hours(self):
+        # переводит накопленные минуты в часы.
         return self.completed_minutes / 60
 
     @property
     def remaining_hours(self):
+        # вычисляет остаток практики по учебной программе.
         return max(float(self.program.practice_hours) - self.completed_hours, 0)
 
     @property
     def practice_percent(self):
+        # рассчитывает долю пройденной практики в процентах.
         if not self.program.practice_hours:
             return 0
         return min(round(self.completed_hours / self.program.practice_hours * 100), 100)
 
 
 class Employee(models.Model):
+    # профиль сотрудника с ролью в автошколе.
     class Role(models.TextChoices):
         INSTRUCTOR = "instructor", "Инструктор"
         TEACHER = "teacher", "Преподаватель"
@@ -127,6 +137,7 @@ class Employee(models.Model):
 
 
 class TrainingVehicle(models.Model):
+    # учебный автомобиль с категорией и типом коробки.
     registration_code = models.CharField(max_length=12, unique=True)
     brand_model = models.CharField(max_length=100)
     category = models.ForeignKey(
@@ -145,6 +156,7 @@ class TrainingVehicle(models.Model):
 
 
 class TrainingLocation(models.Model):
+    # место проведения практического занятия.
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=250)
     is_active = models.BooleanField(default=True)
@@ -159,6 +171,7 @@ class TrainingLocation(models.Model):
 
 
 class InstructorSlot(models.Model):
+    # временной интервал инструктора, автомобиля и площадки.
     class Status(models.TextChoices):
         AVAILABLE = "available", "Свободно"
         BOOKED = "booked", "Забронировано"
@@ -196,10 +209,12 @@ class InstructorSlot(models.Model):
 
     @property
     def duration_minutes(self):
+        # вычисляет длительность слота по времени начала и окончания.
         return int((self.ends_at - self.starts_at).total_seconds() // 60)
 
 
 class PracticeBooking(models.Model):
+    # запись курсанта на свободный слот.
     class Status(models.TextChoices):
         ACTIVE = "active", "Активна"
         CANCELLED = "cancelled", "Отменена"
@@ -236,6 +251,7 @@ class PracticeBooking(models.Model):
 
 
 class DrivingRecord(models.Model):
+    # фактическая запись о проведённой практике.
     student = models.ForeignKey(
         Student, on_delete=models.PROTECT, related_name="driving_records"
     )
@@ -268,6 +284,7 @@ class DrivingRecord(models.Model):
 
 
 class InternalExam(models.Model):
+    # результат теории и состояние допуска к экзамену.
     student = models.ForeignKey(
         Student, on_delete=models.CASCADE, related_name="internal_exams"
     )
@@ -289,6 +306,7 @@ class InternalExam(models.Model):
 
 
 class Notification(models.Model):
+    # сообщение пользователю об изменении учебных данных.
     recipient = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -315,6 +333,7 @@ class Notification(models.Model):
 
 
 class ChangeLog(models.Model):
+    # история причин изменения бронирований.
     booking = models.ForeignKey(
         PracticeBooking, on_delete=models.CASCADE, related_name="changes"
     )

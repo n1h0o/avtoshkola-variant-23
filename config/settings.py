@@ -10,26 +10,28 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+# общие настройки django, базы данных, языка и статических файлов.
+
 import os
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# путь к корневой папке нужен для настройки файлов проекта.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+# эти параметры подходят для локального учебного запуска.
+# список параметров публикации описан в документации django.
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# секретный ключ используется django для подписи данных.
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-local-demo-only")
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# режим отладки включён для локальной разработки проекта.
 DEBUG = True
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 
-# Application definition
+# подключённые приложения и компоненты сервера.
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -71,8 +73,8 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# параметры подключения к базе данных.
+# описание параметров базы данных есть в документации django.
 
 DATABASES = {
     "default": {
@@ -82,8 +84,8 @@ DATABASES = {
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
+# правила проверки паролей пользователей.
+# описание проверки паролей есть в документации django.
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -101,8 +103,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
+# настройки языка интерфейса и локализации дат.
+# параметры локализации описаны в документации django.
 
 LANGUAGE_CODE = "ru-ru"
 
@@ -113,8 +115,8 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
+# расположение стилей, сценариев и изображений интерфейса.
+# подключение статических файлов описано в документации django.
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
@@ -122,7 +124,7 @@ LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "login"
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+# тип первичного ключа по умолчанию для моделей.
+# параметры ключей моделей описаны в документации django.
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

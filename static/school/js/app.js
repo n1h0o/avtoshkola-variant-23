@@ -1,3 +1,4 @@
+// сценарии интерфейса управляют меню, проверкой форм и расписанием.
 (() => {
   // мобильное меню раскрывается по нажатию и сообщает состояние экранному диктору.
   const toggle = document.querySelector('.menu-toggle');
@@ -70,6 +71,7 @@
     return node;
   };
 
+  // фильтрует загруженные слоты и обновляет список на странице.
   function render(list) {
     const needle = (searchInput?.value || '').trim().toLocaleLowerCase('ru');
     const filtered = list.filter((item) => item.search.toLocaleLowerCase('ru').includes(needle));
@@ -84,6 +86,7 @@
     if (count) count.textContent = `${filtered.length} ${filtered.length === 1 ? 'вариант' : 'вариантов'}`;
   }
 
+  // создаёт карточку занятия из данных расписания.
   function makeCard(slot) {
     const card = document.createElement('article');
     card.className = 'slot-card';
@@ -116,6 +119,7 @@
     return endpoint;
   }
 
+  // загружает первую страницу расписания после смены фильтров.
   async function refresh() {
     results.setAttribute('aria-busy', 'true');
     if (loading) loading.hidden = false;
@@ -147,6 +151,7 @@
     }
   }
 
+  // добавляет следующую страницу слотов без перезагрузки.
   async function loadNextPage() {
     if (!hasNext) return;
     if (loadMore) loadMore.disabled = true;

@@ -1,3 +1,5 @@
+/* стили задают общий вид страниц и адаптацию под разные экраны. */
+/* переменные задают палитру, размеры и базовую типографику. */
 :root {
   color-scheme: light;
   --navy: #1e3a5f;
@@ -56,6 +58,7 @@ select {
   touch-action: manipulation;
 }
 
+/* общий контейнер выравнивает содержимое страниц. */
 .container {
   width: min(var(--content), calc(100% - 48px));
   margin-inline: auto;
@@ -75,6 +78,7 @@ select {
   left: 10px;
 }
 
+/* шапка и навигация адаптируются к роли пользователя. */
 .site-header {
   position: sticky;
   top: 0;
@@ -246,6 +250,7 @@ h2 {
   margin-bottom: 0;
 }
 
+/* кнопки используют единые размеры и состояния наведения. */
 .button {
   min-height: 46px;
   display: inline-flex;
@@ -326,6 +331,7 @@ summary:focus-visible {
   text-decoration: none;
 }
 
+/* карточки задают общий фон и границы информационных блоков. */
 .card,
 .stat-card {
   background: var(--surface);
@@ -338,6 +344,7 @@ summary:focus-visible {
   padding: 25px;
 }
 
+/* сетка показывает краткие показатели обучения. */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -520,6 +527,7 @@ summary:focus-visible {
   background: var(--blue);
 }
 
+/* элементы профиля оформляют контакты и данные курсанта. */
 .profile-card {
   display: flex;
   align-items: center;
@@ -643,6 +651,7 @@ summary:focus-visible {
   font-size: 13px;
 }
 
+/* карточки слотов показывают детали свободных занятий. */
 .slot-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -808,6 +817,7 @@ summary:focus-visible {
 }
 
 .field-error,
+/* ошибки форм визуально выделяются рядом с полями. */
 .form-error {
   color: #9f2d2d;
   font-size: 13px;
@@ -864,6 +874,7 @@ summary:focus-visible {
   font-size: 17px;
 }
 
+/* табличные блоки поддерживают просмотр длинных списков. */
 .table-card {
   margin-bottom: 19px;
 }
@@ -987,6 +998,7 @@ tbody tr:last-child td {
   border-color: #b8aeb2;
 }
 
+/* форма входа разделяет приветствие и авторизацию. */
 .login-layout {
   display: grid;
   grid-template-columns: 1.1fr .9fr;
@@ -1054,6 +1066,7 @@ tbody tr:last-child td {
   line-height: 1.8;
 }
 
+/* первый набор правил упрощает раскладку на небольших экранах. */
 @media (max-width: 1000px) {
   .slot-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1087,6 +1100,7 @@ tbody tr:last-child td {
   }
 }
 
+/* мобильная раскладка перестраивает меню, карточки и таблицы. */
 @media (max-width: 720px) {
   .container {
     width: min(100% - 32px, var(--content));
@@ -1265,6 +1279,7 @@ tbody tr:last-child td {
   }
 }
 
+/* узкие экраны получают дополнительные компактные отступы. */
 @media (max-width: 390px) {
   .container {
     width: calc(100% - 24px);
@@ -1283,6 +1298,7 @@ tbody tr:last-child td {
   }
 }
 
+/* для пользователя отключаются необязательные анимации. */
 @media (prefers-reduced-motion: reduce) {
 
   *,

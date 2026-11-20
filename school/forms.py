@@ -1,3 +1,4 @@
+# формы входа, бронирования, расписания и учёта обучения.
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Q
@@ -15,6 +16,7 @@ from .models import (
 
 
 class LoginForm(AuthenticationForm):
+    # настраивает подписи и подсказки полей авторизации.
     username = forms.CharField(
         label="Логин",
         widget=forms.TextInput(
@@ -30,12 +32,14 @@ class LoginForm(AuthenticationForm):
 
 
 class BookingConfirmForm(forms.Form):
+    # требует подтверждения выбранного занятия.
     confirm = forms.BooleanField(
         label="Подтверждаю выбранное время и автомобиль", required=True
     )
 
 
 class SlotSearchForm(forms.Form):
+    # собирает дату и инструктора для фильтра расписания.
     date = forms.DateField(
         required=False, label="Дата", widget=forms.DateInput(attrs={"type": "date"})
     )
@@ -47,6 +51,7 @@ class SlotSearchForm(forms.Form):
 
 
 class ContactForm(forms.Form):
+    # собирает контактные данные и проверяет телефон.
     email = forms.EmailField(
         label="Электронная почта",
         required=False,
@@ -63,6 +68,7 @@ class ContactForm(forms.Form):
     )
 
     def clean_phone(self):
+        # проверяет длину номера и допустимые символы телефона.
         import re
 
         value = self.cleaned_data["phone"].strip()
@@ -79,6 +85,7 @@ class ContactForm(forms.Form):
 
 
 class SlotCreateForm(forms.ModelForm):
+    # проверяет дату, время и отсутствие пересечений слотов.
     class Meta:
         model = InstructorSlot
         fields = ["vehicle", "location", "starts_at", "ends_at"]
@@ -105,6 +112,7 @@ class SlotCreateForm(forms.ModelForm):
             self.fields[field].input_formats = ["%Y-%m-%dT%H:%M"]
 
     def clean(self):
+        # проверяет порядок времени и пересечения расписания.
         cleaned = super().clean()
         start, end = cleaned.get("starts_at"), cleaned.get("ends_at")
         if start and end:
@@ -134,6 +142,7 @@ class SlotCreateForm(forms.ModelForm):
 
 
 class DrivingRecordForm(forms.ModelForm):
+    # сохраняет сведения о проведённом занятии.
     class Meta:
         model = DrivingRecord
         fields = ["booking", "actual_date", "duration_minutes", "comment"]
@@ -159,6 +168,7 @@ class DrivingRecordForm(forms.ModelForm):
         self.fields["duration_minutes"].min_value = 1
 
     def clean_actual_date(self):
+        # запрещает указывать будущую дату практического занятия.
         actual_date = self.cleaned_data["actual_date"]
         if actual_date > timezone.localdate():
             raise forms.ValidationError("Дата занятия не может быть в будущем.")
@@ -166,6 +176,7 @@ class DrivingRecordForm(forms.ModelForm):
 
 
 class TheoryResultForm(forms.ModelForm):
+    # позволяет преподавателю отметить результат зачёта.
     class Meta:
         model = InternalExam
         fields = ["student", "theory_passed", "theory_date"]
@@ -187,11 +198,13 @@ class TheoryResultForm(forms.ModelForm):
 
 
 class ExamRequestForm(forms.Form):
+    # принимает предпочтительную дату внутреннего экзамена.
     exam_date = forms.DateField(
         label="Предпочтительная дата", widget=forms.DateInput(attrs={"type": "date"})
     )
 
     def clean_exam_date(self):
+        # не позволяет назначить экзамен задним числом.
         value = self.cleaned_data["exam_date"]
         if value < timezone.localdate():
             raise forms.ValidationError("Дата не может быть в прошлом.")

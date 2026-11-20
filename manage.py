@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
 
+# командный файл для запуска проверок, миграций и локального сервера.
+
 import os
 import sys
 
 
 def main():
+    # запускает переданную django команду из терминала.
     """Run administrative tasks."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
     try:
