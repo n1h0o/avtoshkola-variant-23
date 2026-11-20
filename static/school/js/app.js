@@ -1,4 +1,5 @@
 (() => {
+  // мобильное меню раскрывается по нажатию и сообщает состояние экранному диктору.
   const toggle = document.querySelector('.menu-toggle');
   const nav = document.querySelector('#main-nav');
   if (toggle && nav) {
@@ -10,6 +11,7 @@
   }
 
   document.querySelectorAll('form[data-validate]').forEach((form) => {
+    // браузер дополняет стандартную проверку полей проверкой формата контактов.
     form.addEventListener('submit', (event) => {
       let valid = form.checkValidity();
       form.querySelectorAll('input[type="email"]').forEach((field) => {
@@ -46,6 +48,7 @@
 
   const results = document.querySelector('#slot-results');
   if (!results) return;
+  // список обновляется с сервера при смене даты или инструктора.
   const dateInput = document.querySelector('#filter-date');
   const instructorInput = document.querySelector('#filter-instructor');
   const searchInput = document.querySelector('#slot-search');

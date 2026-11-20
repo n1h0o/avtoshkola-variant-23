@@ -24,6 +24,7 @@ class Command(BaseCommand):
     help = "Create synthetic demonstration accounts and driving school records."
 
     def handle(self, *args, **options):
+        # команда создаёт демонстрационные данные и может запускаться повторно.
         User = get_user_model()
         cat_b, _ = Category.objects.get_or_create(
             code="B", defaults={"name": "Легковые автомобили"}

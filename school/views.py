@@ -37,6 +37,7 @@ from .models import (
 
 
 def employee_role(role):
+    # перед открытием служебной страницы проверяем роль и активность сотрудника.
     def decorator(view):
         @wraps(view)
         @login_required
@@ -130,6 +131,7 @@ def student_profile_page(request, student):
 
 
 def slot_queryset(student):
+    # курсант видит только будущие свободные слоты для своей программы.
     return InstructorSlot.objects.filter(
         status=InstructorSlot.Status.AVAILABLE,
         starts_at__gte=timezone.now(),
@@ -214,6 +216,7 @@ def slot_detail(request, student, slot_id):
             )
         else:
             try:
+                # блокировка слота не позволяет двум курсантам занять одно время.
                 with transaction.atomic():
                     locked = InstructorSlot.objects.select_for_update().get(pk=slot.pk)
                     if (
@@ -300,6 +303,7 @@ def progress(request, student):
 def exam(request, student):
     current = student.internal_exams.first()
     theory_ok = bool(current and current.theory_passed)
+    # для запроса экзамена нужна сданная теория и не менее 90 процентов практики.
     practice_ok = student.practice_percent >= 90
     form = ExamRequestForm(request.POST or None)
     if request.method == "POST" and form.is_valid():

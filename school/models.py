@@ -223,6 +223,7 @@ class PracticeBooking(models.Model):
         verbose_name = "бронь"
         verbose_name_plural = "брони"
         constraints = [
+            # у одного слота может быть только одна активная бронь.
             models.UniqueConstraint(
                 fields=["slot"],
                 condition=Q(status="active"),
